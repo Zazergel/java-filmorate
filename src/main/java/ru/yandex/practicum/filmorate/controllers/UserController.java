@@ -1,67 +1,59 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.services.UserValidationService;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
+    private final UserValidationService userValidateService = new UserValidationService();
     private final Map<Integer, User> users = new HashMap<>();
-
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private int idGen = 1;
 
     @GetMapping
-    public Collection<User> getUsers() {
+    public ArrayList<User> getUsers() {
         log.debug("Количество пользователей всего: {}", users.size());
-        return users.values();
+        return new ArrayList<>(users.values());
     }
 
     @PostMapping
     public User addNewUser(@Valid @RequestBody User user) {
-        if (user.getLogin() == null || user.getLogin().isBlank() || containsWhiteSpace(user.getLogin())) {
-            throw new ValidationException("Логин не может быть пустым или содержать пробелы!");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
+        userValidateService.checkPostUserValidate(log, users, user);
+        if (user.getName() == null) {
             user.setName(user.getLogin());
+            user.setId(idGen);
+            users.put(idGen, user);
+            idGen++;
+            log.info("Добавлен новый пользователь, {}", user);
+            return user;
+        } else {
+            user.setId(idGen);
+            users.put(idGen, user);
+            idGen++;
+            log.info("Добавлен новый пользователь, {}", user);
+            return user;
         }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Марти, ты опять напортачил с машиной времени! " +
-                    "Твой день рождения не может быть в будущем!");
-        }
-        user.setId(idGen++);
-        users.put(user.getId(), user);
-        return user;
     }
 
     @PutMapping
     public User updateNewUser(@Valid @RequestBody User user) {
-        if (users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
-        } else {
-            throw new ValidationException("Нет пользователя с id=" + user.getId());
+        userValidateService.checkPutUserValidate(log, users, user);
+        if (user.getName().trim().equals("")) {
+            user.setName(user.getLogin());
         }
-
-        return users.get(user.getId());
-    }
-
-    public static boolean containsWhiteSpace(final String login) {
-        if (login != null) {
-            for (int i = 0; i < login.length(); i++) {
-                if (Character.isWhitespace(login.charAt(i))) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        user.setId(user.getId());
+        users.put(user.getId(), user);
+        log.info("Пользователь обновлен - , {}", user);
+        return user;
     }
 }
