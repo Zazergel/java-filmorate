@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -11,8 +12,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Film {
     protected int id;
+    @NotNull (message = "Название фильма не должно быть пустым!")
+    @NotBlank (message = "Название фильма не должно быть пустым!")
     private String name;
+    @Size(max=200, message = "Максимальный размер описания фильма не должен превышать 200 символов!")
     private String description;
     private LocalDate releaseDate;
+    @Positive (message = "Продолжительность фильма должна быть положительной!")
     private int duration;
 }

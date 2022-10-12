@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.FilmValidationService;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @RequestMapping("/films")
@@ -26,7 +28,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addNewFilm(@RequestBody Film film) {
+    public Film addNewFilm(@Valid @RequestBody Film film) {
         filmValidService.checkPostFilmValidation(log, films, film);
         film.setId(idGen++);
         films.put(film.getId(), film);
@@ -35,7 +37,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         filmValidService.checkPutFilmValidation(log, films, film);
         film.setId(film.getId());
         films.put(film.getId(), film);

@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/*На самом деле я просто забыл убрать @Valid из контроллера пользователей, т.к.
+все проверки успешно проходили в сервисном классе. Но раз поступило предложение вернуть
+проверочные аннотации, то вот вариант с объединением проверок, какие-то идут через @Valid,
+а какие-то через сервис. */
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -29,20 +32,14 @@ public class UserController {
     @PostMapping
     public User addNewUser(@Valid @RequestBody User user) {
         userValidateService.checkPostUserValidate(log, users, user);
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-            user.setId(idGen);
-            users.put(idGen, user);
-            idGen++;
-            log.info("Добавлен новый пользователь, {}", user);
-            return user;
-        } else {
-            user.setId(idGen);
-            users.put(idGen, user);
-            idGen++;
-            log.info("Добавлен новый пользователь, {}", user);
-            return user;
         }
+        user.setId(idGen);
+        users.put(idGen, user);
+        idGen++;
+        log.info("Добавлен новый пользователь, {}", user);
+        return user;
     }
 
     @PutMapping
