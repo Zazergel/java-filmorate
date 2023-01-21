@@ -5,8 +5,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.services.filmService.FilmService;
+import ru.yandex.practicum.filmorate.services.validationServices.FilmValidationService;
+import ru.yandex.practicum.filmorate.services.validationServices.UserValidationService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -21,7 +29,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class FilmControllerTest {
     Film film = new Film();
-    FilmController filmController = new FilmController();
+    FilmValidationService filmValidateService = new FilmValidationService();
+    UserValidationService userValidateService = new UserValidationService();
+    UserStorage userStorage = new InMemoryUserStorage(userValidateService);
+    FilmStorage filmStorage = new InMemoryFilmStorage(filmValidateService);
+    FilmService filmService = new FilmService(filmStorage, userStorage, filmValidateService, userValidateService);
+    FilmController filmController = new FilmController(filmStorage, filmService);
 
     private ValidatorFactory validatorFactory;
     private Validator validator;
@@ -93,6 +106,6 @@ class FilmControllerTest {
     @Test
     void checkFilForInvalidFilmUpdate() {
         //Пытаемся обновить то, чего нет
-        assertThrows(ValidationException.class, () -> filmController.updateFilm(film));
+        assertThrows(NotFoundException.class, () -> filmController.updateFilm(film));
     }
 }
