@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
@@ -25,17 +24,10 @@ public class FilmValidationService {
     }
 
     //Проверка наличия фильма по запросу
-    public void checkGetFilmValidation(Logger log, Map<Integer, Film> films, Integer id) {
-        if (!films.containsKey(id)) {
-            log.error("Такого фильма не существует!, {}", id);
+    public void checkGetFilmValidation(Logger log, Map<Integer, Film> films, Integer filmId) {
+        if (!films.containsKey(filmId)) {
+            log.error("Такого фильма не существует!, {}", filmId);
             throw new NotFoundException("Такого фильма не существует!");
-        }
-    }
-
-    //Проверяем, удален ли лайк у фильма от конкретного пользователя
-    public void checkRemoveLikeValidate(FilmStorage filmStorage, Integer id, Integer userId) {
-        if (!filmStorage.getFilms().get(id).getLikes().contains(userId)) {
-            throw new NotFoundException("У фильма нет лайка от этого пользователя");
         }
     }
 

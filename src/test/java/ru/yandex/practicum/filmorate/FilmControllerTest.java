@@ -10,11 +10,11 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.services.filmService.FilmService;
+import ru.yandex.practicum.filmorate.services.film.FilmService;
 import ru.yandex.practicum.filmorate.services.validationServices.FilmValidationService;
 import ru.yandex.practicum.filmorate.services.validationServices.UserValidationService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -33,7 +33,7 @@ class FilmControllerTest {
     UserValidationService userValidateService = new UserValidationService();
     UserStorage userStorage = new InMemoryUserStorage(userValidateService);
     FilmStorage filmStorage = new InMemoryFilmStorage(filmValidateService);
-    FilmService filmService = new FilmService(filmStorage, userStorage, filmValidateService, userValidateService);
+    FilmService filmService = new FilmService(filmStorage, userStorage);
     FilmController filmController = new FilmController(filmStorage, filmService);
 
     private ValidatorFactory validatorFactory;

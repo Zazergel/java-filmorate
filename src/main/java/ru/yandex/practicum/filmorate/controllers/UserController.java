@@ -1,18 +1,16 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.services.userService.UserService;
 import ru.yandex.practicum.filmorate.interfaces.UserStorage;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.services.user.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
-@Component
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -27,38 +25,25 @@ public class UserController {
     }
 
     @GetMapping
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
         return userStorage.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") Integer id) {
-        if (id <= 0) {
-            throw new NotFoundException("id");
-        }
+    public User getUser(@PathVariable("id") @Positive Integer id) {
         return userStorage.getUser(id);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getAllFriends(@PathVariable("id") Integer id) {
-        if (id <= 0) {
-            throw new NotFoundException("id");
-        }
+    public List<User> getAllFriends(@PathVariable("id") @Positive Integer id) {
         return userService.getAllFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable("id") Integer id,
-                                       @PathVariable("otherId") Integer otherId) {
-        if (id <= 0) {
-            throw new NotFoundException("id");
-        }
-        if (otherId <= 0) {
-            throw new NotFoundException("otherId");
-        }
+    public List<User> getCommonFriends(@PathVariable("id") @Positive Integer id,
+                                       @PathVariable("otherId") @Positive Integer otherId) {
         return userService.getCommonFriends(id, otherId);
     }
-
 
     @PostMapping
     public User addNewUser(@RequestBody @Valid User user) {
@@ -71,26 +56,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable("id") Integer id,
-                          @PathVariable("friendId") Integer friendId) {
-        if (id <= 0) {
-            throw new NotFoundException("id");
-        }
-        if (friendId <= 0) {
-            throw new NotFoundException("friendId");
-        }
+    public User addFriend(@PathVariable("id") @Positive Integer id,
+                          @PathVariable("friendId") @Positive Integer friendId) {
         return userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User removeFriend(@PathVariable("id") Integer id,
-                             @PathVariable("friendId") Integer friendId) {
-        if (id <= 0) {
-            throw new NotFoundException("id");
-        }
-        if (friendId <= 0) {
-            throw new NotFoundException("friendId");
-        }
+    public User removeFriend(@PathVariable("id") @Positive Integer id,
+                             @PathVariable("friendId") @Positive Integer friendId) {
         return userService.removeFriend(id, friendId);
     }
 }

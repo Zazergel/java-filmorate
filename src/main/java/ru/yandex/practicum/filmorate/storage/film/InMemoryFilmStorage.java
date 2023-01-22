@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+package ru.yandex.practicum.filmorate.storage.film;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +33,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.get(id);
     }
 
-    //Получаем мапу с фильмами в чистом виде
-    @Override
-    public Map<Integer, Film> getFilms() {
-        return films;
-    }
-
     //Получаем список всех фильмов по запросу
     @Override
     public List<Film> getAllFilms() {
@@ -60,7 +54,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film updateFilm(Film film) {
         filmValidateService.checkGetFilmValidation(log, films, film.getId());
-        film.setId(film.getId());
         films.put(film.getId(), film);
         log.info("Фильм обновлен - , {}", film);
         return film;

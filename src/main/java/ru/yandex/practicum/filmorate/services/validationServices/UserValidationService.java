@@ -32,9 +32,18 @@ public class UserValidationService {
     }
 
     //Проверяем удален ли пользователь из друзей
-    public void checkRemoveFriendValidate(UserStorage userStorage, Integer id, Integer friendId) {
-        if (!userStorage.getUsers().get(id).getFriends().contains(friendId)) {
+    public void checkRemoveFriendValidate(Logger log, UserStorage userStorage, Integer id, Integer friendId) {
+        if (!userStorage.getUser(id).getFriends().contains(friendId)) {
+            log.error("Пользователи с id:" + id + " и id:" + friendId + " - не друзья");
             throw new ValidationException("Этого пользователя уже нет в друзьях");
+        }
+    }
+
+    //Проверка имени пользователя на пустоту, если это так, то заполняем поле имени - логином.
+    public void checkUserNameForBlankOrNull(Logger log, User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+            log.info("Имя пользователя изменено на его логин, т.к. оно было пустым.");
         }
     }
 

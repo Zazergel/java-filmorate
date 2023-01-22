@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.user.UserStorage;
+package ru.yandex.practicum.filmorate.storage.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.services.validationServices.UserValidationS
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -34,27 +35,18 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
-
     //Получаем список всех пользователей по запросу
     @Override
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
         log.debug("Количество пользователей всего: {}", users.size());
         return new ArrayList<>(users.values());
-    }
-
-    //Получаем мапу с пользователями в чистом виде
-    @Override
-    public Map<Integer, User> getUsers() {
-        return users;
     }
 
     //Добавляем пользователя по запросу, проверяя, проходит ли он по параметрам
     @Override
     public User addNewUser(User user) {
         userValidateService.checkPostUserValidate(log, users, user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        userValidateService.checkUserNameForBlankOrNull(log, user);
         user.setId(idGen);
         users.put(idGen, user);
         idGen++;
@@ -66,10 +58,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User updateNewUser(User user) {
         userValidateService.checkGetUserValidate(log, users, user.getId());
-        if (user.getName().trim().equals("")) {
-            user.setName(user.getLogin());
-        }
-        user.setId(user.getId());
+        userValidateService.checkUserNameForBlankOrNull(log, user);
         users.put(user.getId(), user);
         log.info("Пользователь обновлен - , {}", user);
         return user;
