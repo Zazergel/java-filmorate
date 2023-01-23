@@ -17,7 +17,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
-        log.error("BAD_REQUEST!");
+        log.error("BAD_REQUEST! Подробнее: " + e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
         );
@@ -26,7 +26,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
-        log.error("NOT_FOUND!");
+        log.error("NOT_FOUND! Подробнее: " + e.getMessage());
         return new ErrorResponse(
                 e.getMessage()
         );

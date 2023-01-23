@@ -32,11 +32,11 @@ public class FilmService {
 
     //Добавляем лайк фильму от конкретного пользователя, проверив, существуют ли они
     public Film addLike(Integer id, Integer userId) {
-        if (filmStorage.getFilm(id) == null) {
+        if (!filmStorage.getAllFilms().contains(filmStorage.getFilm(id))) {
             log.error("Такого фильма не существует!, {}", id);
             throw new NotFoundException("Такого фильма не существует!");
         }
-        if (userStorage.getUser(userId) == null) {
+        if (!userStorage.getAllUsers().contains(userStorage.getUser(userId))) {
             log.error("Такого пользователя не существует!, {}", userId);
             throw new NotFoundException("Такого пользователя не существует!");
         }
@@ -47,11 +47,11 @@ public class FilmService {
 
     //Удаляем лайк фильму от конкретного пользователя, проверив, существуют ли они, и не был ли удален этот лайк ранее
     public Film removeLike(Integer id, Integer userId) {
-        if (filmStorage.getFilm(id) == null) {
+        if (!filmStorage.getAllFilms().contains(filmStorage.getFilm(id))) {
             log.error("Такого фильма не существует!, {}", id);
             throw new NotFoundException("Такого фильма не существует!");
         }
-        if (userStorage.getUser(userId) == null) {
+        if (!userStorage.getAllUsers().contains(userStorage.getUser(userId))) {
             log.error("Такого пользователя не существует!, {}", userId);
             throw new NotFoundException("Такого пользователя не существует!");
         }

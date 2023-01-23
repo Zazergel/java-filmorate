@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.validationServices.FilmValidationService;
@@ -28,9 +29,12 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     //Получаем один фильм, если он есть
     @Override
-    public Film getFilm(Integer id) {
-        filmValidateService.checkGetFilmValidation(log, films, id);
-        return films.get(id);
+    public Film getFilm(Integer filmId) {
+        if (!films.containsKey(filmId)) {
+            log.error("Такого фильма не существует!, {}", filmId);
+            throw new NotFoundException("Такого фильма не существует!");
+        }
+        return films.get(filmId);
     }
 
     //Получаем список всех фильмов по запросу
@@ -53,7 +57,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     //Обновляем фильм в коллекции, проверив его наличие
     @Override
     public Film updateFilm(Film film) {
-        filmValidateService.checkGetFilmValidation(log, films, film.getId());
+        if (!films.containsKey(film.getId())) {
+            log.error("Такого фильма не существует!, {}", film.getId());
+            throw new NotFoundException("Такого фильма не существует!");
+        }
         films.put(film.getId(), film);
         log.info("Фильм обновлен - , {}", film);
         return film;
