@@ -11,8 +11,6 @@ import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.services.film.FilmService;
-import ru.yandex.practicum.filmorate.services.validationServices.FilmValidationService;
-import ru.yandex.practicum.filmorate.services.validationServices.UserValidationService;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
@@ -29,12 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class FilmControllerTest {
     Film film = new Film();
-    FilmValidationService filmValidateService = new FilmValidationService();
-    UserValidationService userValidateService = new UserValidationService();
-    UserStorage userStorage = new InMemoryUserStorage(userValidateService);
-    FilmStorage filmStorage = new InMemoryFilmStorage(filmValidateService);
-
-
+    UserStorage userStorage = new InMemoryUserStorage();
+    FilmStorage filmStorage = new InMemoryFilmStorage();
     FilmService filmService = new FilmService(filmStorage, userStorage);
     FilmController filmController = new FilmController(filmStorage, filmService);
 

@@ -47,12 +47,12 @@ public class UserController {
 
     @PostMapping
     public User addNewUser(@RequestBody @Valid User user) {
-        return userStorage.addNewUser(user);
+        return userService.addUser(user);
     }
 
     @PutMapping
     public User updateNewUser(@RequestBody @Valid User user) {
-        return userStorage.updateNewUser(user);
+        return userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")

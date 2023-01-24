@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.services.user.UserService;
-import ru.yandex.practicum.filmorate.services.validationServices.UserValidationService;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
@@ -25,9 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserControllerTest {
     User user = new User();
-    UserValidationService userValidationService = new UserValidationService();
-    UserStorage userStorage = new InMemoryUserStorage(userValidationService);
-    UserService userService = new UserService(userStorage, userValidationService);
+    UserStorage userStorage = new InMemoryUserStorage();
+    UserService userService = new UserService(userStorage);
     UserController userController = new UserController(userStorage, userService);
 
     private ValidatorFactory validatorFactory;

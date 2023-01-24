@@ -8,27 +8,23 @@ import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.services.validationServices.UserValidationService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.services.user.UserService.checkUserNameForBlankOrNull;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-
-    private final UserValidationService userValidateService;
     private final Map<Integer, User> users = new HashMap<>();
+
     private int idGen = 1;
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
 
     @Autowired
-    public InMemoryUserStorage(UserValidationService userValidateService) {
-        this.userValidateService = userValidateService;
+    public InMemoryUserStorage() {
     }
 
     //Получаем конкретного пользователя
@@ -48,11 +44,9 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values());
     }
 
-    //Добавляем пользователя по запросу, проверяя, проходит ли он по параметрам
+    //Добавляем пользователя
     @Override
     public User addNewUser(User user) {
-        userValidateService.checkPostUserValidate(log, users, user);
-        checkUserNameForBlankOrNull(log, user);
         user.setId(idGen);
         users.put(idGen, user);
         idGen++;
@@ -60,14 +54,10 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
-    //Обновляем пользователя по запросу, проверив, есть ли такой пользователь, которого хотим обновить
+    //Обновляем пользователя
     @Override
     public User updateNewUser(User user) {
-        if (!users.containsKey(user.getId())) {
-            log.error("Такого пользователя не существует!, {}", user.getId());
-            throw new NotFoundException("Такого пользователя не существует!");
-        }
-        checkUserNameForBlankOrNull(log, user);
+        getUser(user.getId());
         users.put(user.getId(), user);
         log.info("Пользователь обновлен - , {}", user);
         return user;

@@ -8,23 +8,21 @@ import ru.yandex.practicum.filmorate.controllers.FilmController;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.services.validationServices.FilmValidationService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private final FilmValidationService filmValidateService;
     private final Map<Integer, Film> films = new HashMap<>();
     private int idGen = 1;
 
     @Autowired
-    public InMemoryFilmStorage(FilmValidationService filmValidateService) {
-        this.filmValidateService = filmValidateService;
+    public InMemoryFilmStorage() {
     }
 
     //Получаем один фильм, если он есть
@@ -44,10 +42,9 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>(films.values());
     }
 
-    //Добавляем новый фильм в коллекцию, если он проходит по параметрам
+    //Добавляем новый фильм в коллекцию
     @Override
     public Film addNewFilm(Film film) {
-        filmValidateService.checkPostFilmValidation(log, films, film);
         film.setId(idGen++);
         films.put(film.getId(), film);
         log.info("Добавлен новый фильм, {}", film);
@@ -57,10 +54,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     //Обновляем фильм в коллекции, проверив его наличие
     @Override
     public Film updateFilm(Film film) {
-        if (!films.containsKey(film.getId())) {
-            log.error("Такого фильма не существует!, {}", film.getId());
-            throw new NotFoundException("Такого фильма не существует!");
-        }
+        getFilm(film.getId());
         films.put(film.getId(), film);
         log.info("Фильм обновлен - , {}", film);
         return film;
