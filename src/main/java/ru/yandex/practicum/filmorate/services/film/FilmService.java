@@ -26,7 +26,7 @@ public class FilmService {
 
     //Добавляем новый фильм по запросу, проверив, проходит ли он по параметрам
     public Film addFilm(Film film) {
-        checkPostFilmValidation(log, film);
+        checkPostFilmValidation(film);
         filmStorage.addNewFilm(film);
         return film;
     }
@@ -41,28 +41,28 @@ public class FilmService {
 
     //Добавляем лайк фильму от конкретного пользователя, проверив, существуют ли они
     public Film addLike(Integer id, Integer userId) {
-        filmStorage.getFilm(id);
+        Film currentFilm = filmStorage.getFilm(id);
         userStorage.getUser(userId);
-        filmStorage.getFilm(id).getLikes().add(userId);
+        currentFilm.getLikes().add(userId);
         log.info("Пользователь с id:" + userId + " поставил лайк фильму с id:" + id);
-        return filmStorage.getFilm(id);
+        return currentFilm;
     }
 
     //Удаляем лайк фильму от конкретного пользователя, проверив, существуют ли они, и не был ли удален этот лайк ранее
     public Film removeLike(Integer id, Integer userId) {
-        filmStorage.getFilm(id);
+        Film currentFilm = filmStorage.getFilm(id);
         userStorage.getUser(userId);
-        if (!filmStorage.getFilm(id).getLikes().contains(userId)) {
+        if (!currentFilm.getLikes().contains(userId)) {
             log.error("У фильма с id" + id + " Нет лайка от пользователя с id:" + userId);
             throw new NotFoundException("У фильма нет лайка от этого пользователя");
         }
-        filmStorage.getFilm(id).getLikes().remove(userId);
+        currentFilm.getLikes().remove(userId);
         log.info("Пользователь с id:" + userId + " удалил свой лайк фильму с id:" + id);
-        return filmStorage.getFilm(id);
+        return currentFilm;
     }
 
     //Проверка добавления нового фильма в соответствии с требованиями
-    public void checkPostFilmValidation(Logger log, Film film) {
+    private void checkPostFilmValidation(Film film) {
         if (filmStorage.getAllFilms().contains(film)) {
             log.error("Такой фильм уже есть!, {}", film);
             throw new ValidationException("Такой фильм уже есть!");
@@ -72,7 +72,7 @@ public class FilmService {
         }
     }
 
-    public int compare(Film f0, Film f1) {
+    private int compare(Film f0, Film f1) {
         return Integer.compare(f1.getLikes().size(), f0.getLikes().size());
     }
 
