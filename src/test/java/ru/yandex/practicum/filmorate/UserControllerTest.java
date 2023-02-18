@@ -5,8 +5,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controllers.UserController;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.services.user.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -20,7 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class UserControllerTest {
     User user = new User();
-    UserController userController = new UserController();
+    UserStorage userStorage = new InMemoryUserStorage();
+    UserService userService = new UserService(userStorage);
+    UserController userController = new UserController(userStorage, userService);
 
     private ValidatorFactory validatorFactory;
     private Validator validator;
@@ -97,6 +103,6 @@ class UserControllerTest {
 
     @Test
     void checkUserForInvalidUpdateUser() {
-        assertThrows(ValidationException.class, () -> userController.updateNewUser(user));
+        assertThrows(NotFoundException.class, () -> userController.updateNewUser(user));
     }
 }

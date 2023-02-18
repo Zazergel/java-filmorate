@@ -1,56 +1,69 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.services.UserValidationService;
+import ru.yandex.practicum.filmorate.services.user.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.constraints.Positive;
+import java.util.List;
 
-/*На самом деле я просто забыл убрать @Valid из контроллера пользователей, т.к.
-все проверки успешно проходили в сервисном классе. Но раз поступило предложение вернуть
-проверочные аннотации, то вот вариант с объединением проверок, какие-то идут через @Valid,
-а какие-то через сервис. */
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserValidationService userValidateService = new UserValidationService();
-    private final Map<Integer, User> users = new HashMap<>();
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    private int idGen = 1;
+
+    private final UserStorage userStorage;
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserStorage userStorage, UserService userService) {
+        this.userStorage = userStorage;
+        this.userService = userService;
+    }
 
     @GetMapping
-    public ArrayList<User> getUsers() {
-        log.debug("Количество пользователей всего: {}", users.size());
-        return new ArrayList<>(users.values());
+    public List<User> getAllUsers() {
+        return userStorage.getAllUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable("id") @Positive Integer id) {
+        return userStorage.getUser(id);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getAllFriends(@PathVariable("id") @Positive Integer id) {
+        return userService.getAllFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable("id") @Positive Integer id,
+                                       @PathVariable("otherId") @Positive Integer otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 
     @PostMapping
-    public User addNewUser(@Valid @RequestBody User user) {
-        userValidateService.checkPostUserValidate(log, users, user);
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        user.setId(idGen);
-        users.put(idGen, user);
-        idGen++;
-        log.info("Добавлен новый пользователь, {}", user);
-        return user;
+    public User addNewUser(@RequestBody @Valid User user) {
+        return userService.addUser(user);
     }
 
     @PutMapping
-    public User updateNewUser(@Valid @RequestBody User user) {
-        userValidateService.checkPutUserValidate(log, users, user);
-        if (user.getName().trim().equals("")) {
-            user.setName(user.getLogin());
-        }
-        user.setId(user.getId());
-        users.put(user.getId(), user);
-        log.info("Пользователь обновлен - , {}", user);
-        return user;
+    public User updateNewUser(@RequestBody @Valid User user) {
+        return userService.updateUser(user);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public User addFriend(@PathVariable("id") @Positive Integer id,
+                          @PathVariable("friendId") @Positive Integer friendId) {
+        return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public User removeFriend(@PathVariable("id") @Positive Integer id,
+                             @PathVariable("friendId") @Positive Integer friendId) {
+        return userService.removeFriend(id, friendId);
     }
 }
