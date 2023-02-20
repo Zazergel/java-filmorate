@@ -1,48 +1,41 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.services.user.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.Collection;
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-
-    private final UserStorage userStorage;
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
-        this.userStorage = userStorage;
-        this.userService = userService;
-    }
-
     @GetMapping
-    public List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public Collection<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") @Positive Integer id) {
-        return userStorage.getUser(id);
+    public User getUser(@PathVariable("id") @Positive Long id) {
+        return userService.getUser(id);
     }
 
     @GetMapping("/{id}/friends")
-    public List<User> getAllFriends(@PathVariable("id") @Positive Integer id) {
+    public List<User> getAllFriends(@PathVariable("id") @Positive long id) {
         return userService.getAllFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public List<User> getCommonFriends(@PathVariable("id") @Positive Integer id,
-                                       @PathVariable("otherId") @Positive Integer otherId) {
-        return userService.getCommonFriends(id, otherId);
+    public List<User> getMutualFriends(@PathVariable("id") @Positive long userId,
+                                       @PathVariable("otherId") @Positive long otherId) {
+        return userService.getMutualFriends(userId, otherId);
     }
 
     @PostMapping
@@ -51,19 +44,19 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateNewUser(@RequestBody @Valid User user) {
+    public User updateUser(@RequestBody @Valid User user) {
         return userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable("id") @Positive Integer id,
-                          @PathVariable("friendId") @Positive Integer friendId) {
-        return userService.addFriend(id, friendId);
+    public void addFriend(@PathVariable("id") @Positive long userId,
+                          @PathVariable("friendId") @Positive long friendId) {
+        userService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User removeFriend(@PathVariable("id") @Positive Integer id,
-                             @PathVariable("friendId") @Positive Integer friendId) {
-        return userService.removeFriend(id, friendId);
+    public void removeFriend(@PathVariable("id") @Positive long userId,
+                             @PathVariable("friendId") @Positive long friendId) {
+        userService.removeFriend(userId, friendId);
     }
 }
