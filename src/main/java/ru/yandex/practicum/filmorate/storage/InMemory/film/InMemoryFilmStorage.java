@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.InMemory.film;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.interfaces.FilmStorage;
+import ru.yandex.practicum.filmorate.interfaces.FilmStorageIm;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.ArrayList;
@@ -16,10 +16,10 @@ import java.util.Map;
 
 
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage implements FilmStorageIm {
     private static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private final Map<Integer, Film> films = new HashMap<>();
-    private int idGen = 1;
+    private final Map<Long, Film> films = new HashMap<>();
+    private long idGen = 1;
 
     @Autowired
     public InMemoryFilmStorage() {
@@ -27,7 +27,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     //Получаем один фильм, если он есть
     @Override
-    public Film getFilm(Integer filmId) {
+    public Film getFilm(Long filmId) {
         if (!films.containsKey(filmId)) {
             log.error("Такого фильма не существует!, {}", filmId);
             throw new NotFoundException("Такого фильма не существует!");

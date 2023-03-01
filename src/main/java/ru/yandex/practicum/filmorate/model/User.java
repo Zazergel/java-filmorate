@@ -1,21 +1,20 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class User {
-    private int id;
+    @PositiveOrZero(message = "ID пользователя не может быть отрицательным числом")
+    private long id;
     private String name;
     @PastOrPresent(message = "Марти, твой день рождения не может быть в будущем, машина времени снова неисправна!)")
     private LocalDate birthday;
@@ -23,5 +22,5 @@ public class User {
     private String login;
     @Email(message = "Почта должна быть как почта, а не то, что тут написано!")
     private String email;
-    private Set<Integer> friends = new HashSet<>();
+    private HashSet<Long> friends;
 }

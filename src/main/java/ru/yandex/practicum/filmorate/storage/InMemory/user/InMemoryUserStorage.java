@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage.InMemory.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
-import ru.yandex.practicum.filmorate.interfaces.UserStorage;
+import ru.yandex.practicum.filmorate.interfaces.UserStorageIm;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.ArrayList;
@@ -16,11 +16,10 @@ import java.util.Map;
 
 
 @Component
-public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
-
-    private int idGen = 1;
+public class InMemoryUserStorage implements UserStorageIm {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final Map<Long, User> users = new HashMap<>();
+    private long idGen = 1;
 
 
     @Autowired
@@ -29,7 +28,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     //Получаем конкретного пользователя
     @Override
-    public User getUser(Integer id) {
+    public User getUser(Long id) {
         if (!users.containsKey(id)) {
             log.error("Такого пользователя не существует!, {}", id);
             throw new NotFoundException("Такого пользователя не существует!");
