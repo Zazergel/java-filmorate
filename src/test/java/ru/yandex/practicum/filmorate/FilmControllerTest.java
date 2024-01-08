@@ -54,7 +54,7 @@ class FilmControllerTest {
         for (ConstraintViolation<Film> violation : violationSet) {
             System.out.println("Фильм не был добавлен так как: " + violation.getMessage());
         }
-        assertEquals(violationSet.size(), 1);
+        assertEquals(1, violationSet.size());
         assertFalse(violationSet.isEmpty()); //Если есть какие-то ошибки, то тест пройден!
     }
 
@@ -63,10 +63,7 @@ class FilmControllerTest {
         Film film = Film.builder()
                 .id(1)
                 .name("Название тестового фильма")
-                .description("Описание тестового фильма с воооооооооооооооооооооооооооооооооооооооооооооооооооо\" +\n" +
-                        "                \"ооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооооо\" +\n" +
-                        "                \"оооооооооооооооооооооооооооооооооооооооооооооооооооо\" +\n" +
-                        "                \"ооооооооооооооооооооооооооооооооооооооооооооооооооот таким описанием!")
+                .description("0".repeat(1000))
                 .releaseDate(LocalDate.of(1980, 1, 1))
                 .duration(100)
                 .mpa(Mpa.builder().id(1).name("G").build())
@@ -75,7 +72,7 @@ class FilmControllerTest {
         for (ConstraintViolation<Film> violation : violationSet) {
             System.out.println("Фильм не был добавлен так как: " + violation.getMessage());
         }
-        assertEquals(violationSet.size(), 1);
+        assertEquals(1, violationSet.size());
         assertFalse(violationSet.isEmpty());
     }
 
@@ -90,7 +87,7 @@ class FilmControllerTest {
                 .mpa(Mpa.builder().id(1).name("G").build())
                 .build();
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(violations.size(), 1);
+        assertEquals(1, violations.size());
     }
 
 }
