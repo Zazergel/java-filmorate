@@ -3,7 +3,7 @@
   <a href="https://github.com/Zazergel/java-filmorate">
   </a>
 
-  <h3 align="center">Filmorate</h3>
+  <h1 align="center">Filmorate</h1>
 
   <p align="center">
     <a href="https://github.com/Zazergel/java-filmorate/issues">Report Bug</a>
@@ -12,8 +12,13 @@
   </p>
 </p>
 
-
-![Downloads](https://img.shields.io/github/downloads/Zazergel/java-filmorate/total) ![Contributors](https://img.shields.io/github/contributors/Zazergel/java-filmorate?color=dark-green) ![Issues](https://img.shields.io/github/issues/Zazergel/java-filmorate) ![License](https://img.shields.io/github/license/Zazergel/java-filmorate) 
+<div class="myWrapper" markdown="1" align="center">
+  
+![Downloads](https://img.shields.io/github/downloads/Zazergel/java-filmorate/total) 
+![Contributors](https://img.shields.io/github/contributors/Zazergel/java-filmorate?color=dark-green) 
+![Issues](https://img.shields.io/github/issues/Zazergel/java-filmorate) 
+![License](https://img.shields.io/github/license/Zazergel/java-filmorate) 
+</div>
 
 ## Table Of Contents
 
@@ -41,10 +46,9 @@
 
 ## Built With
 
-* [Java](http://java.com/)
-* [Maven](https://maven.apache.org/)
-* [Spring Boot](https://spring.io/projects/spring-boot)
-* [H2](https://h2database.github.io/html/main.html)
+<p align="left">
+    <img src="https://skillicons.dev/icons?i=java,maven,spring" />
+</p>
 
 ## Getting Started
 
@@ -71,7 +75,7 @@ git clone https://github.com/Zazergel/java-filmorate.git
 
 ## Authors
 
-* [Zazergel](https://github.com/Zazegel) - *Java developer* -  
+**[Zazergel](https://github.com/Zazegel)**
 
 
  
